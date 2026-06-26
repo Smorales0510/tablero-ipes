@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IPES · Índice de Progreso Económico y Social — Tablero</title>
+<style>
+:root{
+  --bg:#f4f6fb; --panel:#ffffff; --panel2:#f8fafc; --ink:#0f1f3d; --muted:#5b6b86;
+  --line:#e3e9f2; --brand:#1d4ed8; --brand2:#0ea5a4; --eco:#2563eb; --soc:#0d9488;
+  --accent:#f59e0b; --good:#16a34a; --bad:#dc2626; --chip:#eef2ff; --shadow:0 1px 3px rgba(15,31,61,.08),0 8px 24px rgba(15,31,61,.06);
+}
+[data-theme="dark"]{
+  --bg:#0b1220; --panel:#121c2e; --panel2:#0f1828; --ink:#e8eef9; --muted:#9fb0cc;
+  --line:#233149; --brand:#60a5fa; --brand2:#2dd4bf; --eco:#60a5fa; --soc:#2dd4bf;
+  --chip:#1b273d; --shadow:0 1px 3px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font:14px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--brand)}
+.wrap{max-width:1180px;margin:0 auto;padding:0 18px}
+header.top{background:linear-gradient(120deg,#0f1f3d,#1d4ed8 55%,#0ea5a4);color:#fff;padding:22px 0 16px}
+[data-theme="dark"] header.top{background:linear-gradient(120deg,#0a1424,#13315f 55%,#0b3b3a)}
+.brandrow{display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:space-between}
+.title h1{margin:0;font-size:22px;font-weight:800;letter-spacing:.2px}
+.title p{margin:4px 0 0;font-size:12.5px;opacity:.85}
+.tools{display:flex;gap:8px;flex-wrap:wrap}
+.btn{background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.25);padding:7px 12px;border-radius:9px;cursor:pointer;font-size:12.5px;font-weight:600}
+.btn:hover{background:rgba(255,255,255,.24)}
+nav.tabs{position:sticky;top:0;z-index:30;background:var(--panel);border-bottom:1px solid var(--line);box-shadow:var(--shadow)}
+nav.tabs .wrap{display:flex;gap:2px;overflow-x:auto;scrollbar-width:thin}
+nav.tabs button{background:none;border:none;border-bottom:3px solid transparent;color:var(--muted);padding:13px 14px;font-size:13.5px;font-weight:600;cursor:pointer;white-space:nowrap}
+nav.tabs button.active{color:var(--brand);border-bottom-color:var(--brand)}
+nav.tabs button:hover{color:var(--ink)}
+main{padding:22px 0 60px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow);margin-bottom:18px}
+.panel h2{margin:0 0 4px;font-size:17px}
+.panel h3{margin:18px 0 8px;font-size:14px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;font-weight:700}
+.sub{color:var(--muted);font-size:12.5px;margin:2px 0 0}
+.grid{display:grid;gap:14px}
+.kpis{grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
+.kpi{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:14px}
+.kpi .v{font-size:26px;font-weight:800;line-height:1}
+.kpi .l{color:var(--muted);font-size:12px;margin-top:6px}
+.kpi .x{font-size:12px;margin-top:4px;font-weight:600}
+.cards{grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}
+.card{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:14px;position:relative;overflow:hidden;cursor:pointer}
+.card:hover{border-color:var(--brand)}
+.card .rk{position:absolute;top:8px;right:12px;font-size:30px;font-weight:800;color:var(--line)}
+.card .cn{font-weight:700;font-size:15px}
+.card .ci{font-size:12px;color:var(--muted)}
+.card .cs{font-size:30px;font-weight:800;margin-top:8px}
+.card .bars{display:flex;gap:14px;margin-top:8px;font-size:11px;color:var(--muted)}
+.tag{display:inline-block;background:var(--chip);color:var(--brand);border-radius:999px;padding:2px 9px;font-size:11px;font-weight:700}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th,td{padding:7px 8px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+th:first-child,td:first-child,th.l,td.l{text-align:left}
+thead th{position:sticky;top:0;background:var(--panel);cursor:pointer;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.3px;z-index:5}
+tbody tr{cursor:pointer}
+tbody tr:hover{background:var(--panel2)}
+tbody tr.sel{background:var(--chip)}
+.scorecell{font-weight:700;color:#fff;border-radius:6px;padding:2px 7px;display:inline-block;min-width:42px;text-align:center}
+.tablescroll{max-height:72vh;overflow:auto;border:1px solid var(--line);border-radius:10px}
+select,input[type=search]{background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:9px;padding:8px 10px;font-size:13px;font-weight:600}
+label.fld{display:inline-flex;flex-direction:column;gap:5px;font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+.controls{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-bottom:14px}
+.chartbox{position:relative;height:440px}
+.chartbox.tall{height:560px}
+.muted{color:var(--muted)}
+.legendrow{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;font-size:12px}
+.legendrow span{display:inline-flex;align-items:center;gap:6px}
+.dot{width:11px;height:11px;border-radius:3px;display:inline-block}
+.pickwrap{display:flex;flex-wrap:wrap;gap:7px;margin:10px 0}
+.pick{border:1px solid var(--line);background:var(--panel2);border-radius:999px;padding:5px 12px;cursor:pointer;font-size:12.5px;font-weight:600}
+.pick.on{background:var(--brand);color:#fff;border-color:var(--brand)}
+.note{background:var(--panel2);border-left:3px solid var(--brand);padding:10px 12px;border-radius:8px;font-size:12.5px;color:var(--muted)}
+.metho p{margin:8px 0}
+.metho code{background:var(--panel2);padding:1px 5px;border-radius:5px}
+.heat td{text-align:center;color:#fff;font-weight:700;font-size:11px;border:1px solid var(--bg)}
+.heat td.l{color:var(--ink);background:var(--panel);font-weight:600;text-align:left}
+.mapwrap{width:100%;overflow:hidden}
+.mapwrap svg{width:100%;height:auto;display:block}
+.country{stroke:var(--panel);stroke-width:.4px;cursor:pointer}
+.country:hover{stroke:var(--ink);stroke-width:1px}
+.tip{position:fixed;pointer-events:none;background:var(--ink);color:var(--bg);padding:6px 10px;border-radius:8px;font-size:12px;font-weight:600;z-index:99;opacity:0;transition:opacity .1s}
+footer{color:var(--muted);font-size:12px;padding:20px 0 40px;text-align:center;line-height:1.7}
+.hide{display:none!important}
+@media(max-width:640px){.chartbox{height:360px}.title h1{font-size:18px}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap brandrow">
+  <div class="title">
+    <h1>Índice de Progreso Económico y Social — IPES</h1>
+    <p>53 países · Colombia + OCDE + América Latina · 2 subíndices · 13 pilares · 91 indicadores · Puntajes 0–100</p>
+  </div>
+  <div class="tools">
+    <button class="btn" id="btnTheme">🌙 Modo oscuro</button>
+    <button class="btn" id="btnCsv">⬇ Descargar CSV</button>
+    <button class="btn" id="btnShare">🔗 Compartir</button>
+  </div>
+</div></header>
+
+<nav class="tabs"><div class="wrap" id="tabnav"></div></nav>
+
+<main class="wrap" id="app"></main>
+<div class="tip" id="tip"></div>
+
+<footer class="wrap">
+  Tablero IPES — fines de visualización. Puntajes 0–100 normalizados (min–max) sobre 53 países; el IPES es el promedio de los subíndices Económico y Social.<br>
+  Fuentes: Banco Mundial, OMS, OIT, UNESCO, FMI, V-Dem, Transparencia Internacional y otras. <strong>Verifica las cifras contra las fuentes oficiales antes de publicar.</strong>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
